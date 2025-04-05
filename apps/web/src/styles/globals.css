@@ -4,11 +4,23 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 :root {
+  --success: #4ade80;
+  --success-foreground: #121212;
+  --danger: #ef4444;
+  --danger-foreground: #121212;
+  --finance-black: #121212;
+  --finance-black-100: #0a0a0a;
+  --finance-black-200: #1a1a1a;
+  --finance-black-300: #262626;
+  --finance-green: #4ade80;
+  --finance-green-100: #22c55e;
+  --finance-green-200: #16a34a;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -44,6 +56,17 @@
 }
 
 .dark {
+  --success: #4ade80;
+  --success-foreground: #121212;
+  --danger: #ef4444;
+  --danger-foreground: #121212;
+  --finance-black: #121212;
+  --finance-black-100: #0a0a0a;
+  --finance-black-200: #1a1a1a;
+  --finance-black-300: #262626;
+  --finance-green: #4ade80;
+  --finance-green-100: #22c55e;
+  --finance-green-200: #16a34a;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -78,10 +101,28 @@
 }
 
 @theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.7s ease-out;
+  --animate-fade-in-delayed: fade-in 0.7s ease-out 0.2s forwards;
+  --animate-fade-in-delayed-more: fade-in 0.7s ease-out 0.4s forwards;
+  --animate-fade-in-right: fade-in-right 0.7s ease-out;
+  --animate-pulse-subtle: pulse-subtle 3s ease-in-out infinite;
+  --color-finance-black: #121212;
+  --color-finance-black-100: #0a0a0a;
+  --color-finance-black-200: #1a1a1a;
+  --color-finance-black-300: #262626;
+  --color-finance-green: #4ade80;
+  --color-finance-green-100: #22c55e;
+  --color-finance-green-200: #16a34a;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -113,8 +154,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
 
   @keyframes accordion-down {
     from {
@@ -131,6 +170,38 @@
     }
     to {
       height: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
     }
   }
 }

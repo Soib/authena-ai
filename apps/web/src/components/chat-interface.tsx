@@ -39,15 +39,15 @@ export function ChatInterface({
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "justify-center" : ""}`}
+            className={`animate-fade-in flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "justify-center" : ""}`}
           >
             <div
               className={`max-w-[80%] p-3 rounded-lg ${
                 message.role === "user"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-finance-green text-finance-black-100"
                   : message.role === "assistant"
-                    ? "bg-gray-200 text-gray-800"
-                    : "bg-gray-100 text-gray-500 text-sm italic"
+                    ? "bg-finance-black-300 text-finance-green"
+                    : "bg-finance-black-300 text-muted-foreground text-sm italic"
               }`}
             >
               {message.content}

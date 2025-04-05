@@ -6,8 +6,9 @@ import { Button } from "~/components/ui/button";
 import { Camera } from "~/components/camera";
 import { ChatInterface } from "~/components/chat-interface";
 import { useFaceApi, type FaceDescriptor } from "~/hooks/use-face-api";
+import { cn } from "~/lib/utils";
 
-export const ChatPage = () => {
+export const Chat = () => {
   const [step, setStep] = useState<
     "intro" | "id-card" | "face" | "verifying" | "result"
   >("intro");
@@ -151,10 +152,9 @@ export const ChatPage = () => {
     setStep("intro");
   };
 
-  console.log(step);
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <Card className="w-full max-w-md  animate-fade-in">
         <CardContent className="p-6">
           <ChatInterface messages={messages} />
 
@@ -189,7 +189,9 @@ export const ChatPage = () => {
               <div className="flex space-x-4 mb-4">
                 {idCardImage && (
                   <div className="w-1/2">
-                    <p className="text-sm text-center mb-2">ID Card</p>
+                    <p className="text-sm text-center mb-2 text-muted-foreground">
+                      ID Card
+                    </p>
                     <img
                       src={idCardImage || "/placeholder.svg"}
                       alt="ID Card"
@@ -199,7 +201,9 @@ export const ChatPage = () => {
                 )}
                 {faceImage && (
                   <div className="w-1/2">
-                    <p className="text-sm text-center mb-2">Your Face</p>
+                    <p className="text-sm text-center mb-2 text-muted-foreground">
+                      Your Face
+                    </p>
                     <img
                       src={faceImage || "/placeholder.svg"}
                       alt="Face"
@@ -211,14 +215,33 @@ export const ChatPage = () => {
 
               {verificationResult && (
                 <div
-                  className={`p-4 rounded-md text-center ${verificationResult.matched ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                  className={cn(
+                    "p-4 rounded-md text-center",
+                    verificationResult.matched
+                      ? "bg-success/20 border border-success text-success-foreground"
+                      : "bg-danger/20 border border-danger text-danger-foreground"
+                  )}
                 >
-                  <p className="font-bold">
+                  <p
+                    className={cn(
+                      "font-bold",
+                      verificationResult.matched
+                        ? "text-success"
+                        : "text-danger"
+                    )}
+                  >
                     {verificationResult.matched
                       ? "Identity Verified"
                       : "Verification Failed"}
                   </p>
-                  <p className="text-sm">
+                  <p
+                    className={cn(
+                      "text-sm",
+                      verificationResult.matched
+                        ? "text-success/70"
+                        : "text-danger/70"
+                    )}
+                  >
                     Similarity Score:{" "}
                     {((1 - verificationResult.score) * 100).toFixed(2)}%
                   </p>

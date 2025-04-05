@@ -21,22 +21,22 @@ export function ChatLoader({ text = "Processing" }: ChatLoaderProps) {
   }, []);
 
   return (
-    <div className="flex items-center space-x-2 p-3 bg-gray-200 rounded-lg max-w-[80%]">
+    <div className="flex items-center space-x-2 p-3 bg-secondary rounded-lg max-w-[80%]">
       <div className="flex space-x-1">
         <div
-          className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+          className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
           style={{ animationDelay: "0ms" }}
         ></div>
         <div
-          className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+          className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
           style={{ animationDelay: "150ms" }}
         ></div>
         <div
-          className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+          className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
           style={{ animationDelay: "300ms" }}
         ></div>
       </div>
-      <span className="text-gray-700 min-w-[100px]">
+      <span className="text-muted-foreground min-w-[100px]">
         {text}
         {dots}
       </span>

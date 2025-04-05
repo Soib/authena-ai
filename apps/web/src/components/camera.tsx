@@ -70,7 +70,7 @@ export function Camera({ onCapture }: CameraProps) {
   return (
     <div className="flex flex-col items-center">
       {error && (
-        <div className="bg-red-100 text-red-800 p-3 rounded-md mb-4">
+        <div className="bg-destructive/20 text-destructive-foreground p-3 rounded-md mb-4">
           {error}
         </div>
       )}

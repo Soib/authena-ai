@@ -15,6 +15,9 @@
 		"lint": "biome check --write ."
 	},
 	"dependencies": {
+    "@azure-rest/ai-document-intelligence": "^1.0.0",
+    "@azure/ai-form-recognizer": "4.0.0",
+    "@azure/identity": "^4.8.0",
 		"@hookform/resolvers": "^5.0.1",
 		"@radix-ui/react-accordion": "^1.2.3",
 		"@radix-ui/react-alert-dialog": "^1.1.6",

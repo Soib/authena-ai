@@ -7,6 +7,7 @@ import { Camera } from "~/components/camera";
 import { ChatInterface } from "~/components/chat-interface";
 import { useFaceApi, type FaceDescriptor } from "~/hooks/use-face-api";
 import { useScrapDocumentData } from "~/hooks/use-scarp-document-data";
+import { cn } from "~/lib/utils";
 
 export const Chat = () => {
   const [step, setStep] = useState<
@@ -45,14 +46,13 @@ export const Chat = () => {
     setMessages((prev) => [...prev, { role, content }]);
   };
 
-  console.log(results);
 
   const handleIdFrontCapture = async (canvas: HTMLCanvasElement) => {
     const imageData = canvas.toDataURL("image/png");
     setIdCardImage(imageData);
+    addMessage("system", "Front of ID card captured.");
     await addDocument("idFront", imageData);
 
-    addMessage("system", "Front of ID card captured.");
 
     try {
       const descriptor = await detectFace(canvas);
@@ -74,15 +74,16 @@ export const Chat = () => {
     } catch (error) {
       addMessage("system", "Error processing ID card front.");
       setIdCardImage(null);
+      setStep("id-front");
     }
   };
 
   const handleIdBackCapture = async (canvas: HTMLCanvasElement) => {
     const imageData = canvas.toDataURL("image/png");
     setIdCardBackImage(imageData);
+    addMessage("system", "Back of ID card captured.");
     await addDocument("idBack", imageData);
 
-    addMessage("system", "Back of ID card captured.");
     addMessage(
       "assistant",
       "Great! Now, let's take a photo of your face. Please look directly at the camera."
@@ -92,9 +93,8 @@ export const Chat = () => {
 
   const handleFaceCapture = async (canvas: HTMLCanvasElement) => {
     const imageData = canvas.toDataURL("image/png");
-    setFaceImage(imageData);
-
     addMessage("system", "Face photo captured.");
+    setFaceImage(imageData);
 
     try {
       const faceDescriptor = await detectFace(canvas);
@@ -112,7 +112,7 @@ export const Chat = () => {
             Array.from(idCardDescriptor.descriptor),
             Array.from(faceDescriptor.descriptor)
           );
-          const threshold = 0.6; // This threshold can be adjusted based on your requirements
+          const threshold = 0.6; 
           const matched = distance < threshold;
 
           setVerificationResult({ matched, score: distance });
@@ -135,6 +135,7 @@ export const Chat = () => {
             "assistant",
             "I couldn't detect your face. Please try again with better lighting and make sure your face is clearly visible."
           );
+          setStep("face");
         }
       } else {
         addMessage(
@@ -142,6 +143,7 @@ export const Chat = () => {
           "I couldn't detect your face. Please try again with better lighting and make sure your face is clearly visible."
         );
         setFaceImage(null);
+        setStep("face");
       }
     } catch (error) {
       addMessage("system", "Error processing face.");
@@ -174,18 +176,12 @@ export const Chat = () => {
     setStep("intro");
   };
 
-  console.log(step);
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardContent className="p-6">
-          <ChatInterface messages={messages} />
+          <ChatInterface messages={messages} isLoading={isProcessing}/>
 
-          {isProcessing && (
-            <div className="mt-4 flex justify-center">
-              <p>Processing...</p>
-            </div>
-          )}
 
           {step === "intro" && (
             <div className="mt-4 flex justify-center">
@@ -224,7 +220,7 @@ export const Chat = () => {
               <div className="flex space-x-4 mb-4 flex-wrap">
                 {idCardImage && (
                   <div className="w-1/3">
-                    <p className="text-sm text-center mb-2">ID Card Front</p>
+                    <p className="text-sm text-center mb-2 text-muted-foreground">ID Card Front</p>
                     <img
                       src={idCardImage}
                       alt="ID Card Front"
@@ -234,7 +230,7 @@ export const Chat = () => {
                 )}
                 {idCardBackImage && (
                   <div className="w-1/3">
-                    <p className="text-sm text-center mb-2">ID Card Back</p>
+                    <p className="text-sm text-center mb-2 text-muted-foreground">ID Card Back</p>
                     <img
                       src={idCardBackImage}
                       alt="ID Card Back"
@@ -244,7 +240,7 @@ export const Chat = () => {
                 )}
                 {faceImage && (
                   <div className="w-1/3">
-                    <p className="text-sm text-center mb-2">Your Face</p>
+                    <p className="text-sm text-center mb-2 text-muted-foreground">Your Face</p>
                     <img
                       src={faceImage}
                       alt="Face"
@@ -254,40 +250,45 @@ export const Chat = () => {
                 )}
               </div>
 
-              {/* {results.idFront && (
-                <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
-                  <p className="font-bold">ID Document Information:</p>
-                  <pre className="overflow-auto max-h-40">
-                    {JSON.stringify(
-                      results.idFront.documents?.[0]?.fields,
-                      null,
-                      2
-                    )}
-                  </pre>
-                </div>
-              )} */}
-
-              {verificationResult && (
-                <div
-                  className={`p-4 rounded-md text-center ${verificationResult.matched ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
-                >
-                  <p className="font-bold">
-                    {verificationResult.matched
-                      ? "Identity Verified"
-                      : "Verification Failed"}
-                  </p>
-                  <p className="text-sm">
-                    Similarity Score:{" "}
-                    {((1 - verificationResult.score) * 100).toFixed(2)}%
-                  </p>
-                </div>
-              )}
+                  {verificationResult && (
+								<div
+									className={cn(
+										"rounded-md p-4 text-center",
+										verificationResult.matched
+											? "border border-success bg-success/20 text-success-foreground"
+											: "border border-danger bg-danger/20 text-danger-foreground",
+									)}
+								>
+									<p
+										className={cn(
+											"font-bold",
+											verificationResult.matched
+												? "text-success"
+												: "text-danger",
+										)}
+									>
+										{verificationResult.matched
+											? "Identity Verified"
+											: "Verification Failed"}
+									</p>
+									<p
+										className={cn(
+											"text-sm",
+											verificationResult.matched
+												? "text-success/70"
+												: "text-danger/70",
+										)}
+									>
+										Similarity Score:{" "}
+										{((1 - verificationResult.score) * 100).toFixed(2)}%
+									</p>
+								</div>
+							)}
 
               <div className="mt-4 flex justify-center">
                 <Button onClick={resetVerification}>Start Over</Button>
               </div>
-            </div>
-          )}
+            </div>)}
         </CardContent>
       </Card>
     </div>

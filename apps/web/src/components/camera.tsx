@@ -68,27 +68,27 @@ export function Camera({ onCapture }: CameraProps) {
 	};
 
 	return (
-		<div className="flex flex-col items-center">
+		<div className="flex flex-col items-center h-full">
 			{error && (
 				<div className="mb-4 rounded-md bg-destructive/20 p-3 text-destructive-foreground">
 					{error}
 				</div>
 			)}
 
-			<div className="relative aspect-video w-full overflow-hidden rounded-md bg-black">
+			<div className="relative w-1/3 h-[200px] overflow-hidden rounded-md bg-black">
 				{!capturedImage ? (
 					<video
 						ref={videoRef}
 						autoPlay
 						playsInline
 						muted
-						className="-scale-x-100 h-full w-full object-cover"
+						className="-scale-x-100 h-full w-full"
 					/>
 				) : (
 					<img
 						src={capturedImage || "/placeholder.svg"}
 						alt="Captured"
-						className="h-full w-full object-cover"
+						className="h-auto w-full"
 					/>
 				)}
 				<canvas ref={canvasRef} className="hidden" />

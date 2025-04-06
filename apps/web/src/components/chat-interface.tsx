@@ -93,7 +93,7 @@ export function ChatInterface({
 							</div>
 							<div ref={messagesEndRef} />
 						</ScrollArea>
-						<div>{children}</div>
+						<div className="relative">{children}</div>
 					</div>
 
 					{/* Preview Section */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, UserRound, Users } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { Button } from "~/components/ui/button";
 
@@ -38,13 +39,12 @@ const Hero = () => {
 								Tailored solutions for your personal financial growth and
 								security.
 							</p>
-							<Button
-								className="btn-glow group w-full bg-finance-green text-finance-black-100 hover:bg-finance-green-100"
-								onClick={() => (window.location.href = "/onboarding/personal")}
-							>
-								Get Started
-								<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-							</Button>
+							<Link href="/onboarding/personal">
+								<Button className="btn-glow group w-full bg-finance-green text-finance-black-100 hover:bg-finance-green-100">
+									Get Started
+									<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+								</Button>
+							</Link>
 						</div>
 
 						<div className="glass-card hover:-translate-y-2 transform animate-fade-in-delayed-more rounded-xl p-8 opacity-0 transition-all duration-300 hover:shadow-finance-green/10 hover:shadow-xl">
@@ -57,11 +57,10 @@ const Hero = () => {
 								expand.
 							</p>
 							<Button
+								disabled
 								className="btn-glow group w-full border border-finance-green bg-finance-black-300 text-finance-green hover:bg-finance-green hover:text-finance-black-100"
-								onClick={() => (window.location.href = "/onboarding/business")}
 							>
-								Get Started
-								<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+								Coming Soon
 							</Button>
 						</div>
 					</div>

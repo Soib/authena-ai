@@ -123,10 +123,9 @@ const BusinessPersonal = () => {
 							</ul>
 							<Button
 								className="btn-glow group bg-finance-green text-finance-black-100 hover:bg-finance-green-100"
-								onClick={() => (window.location.href = "/onboarding/business")}
+								disabled
 							>
-								Start Business Onboarding
-								<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+								Coming Soon
 							</Button>
 						</div>
 					</div>

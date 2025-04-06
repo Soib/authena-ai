@@ -33,16 +33,19 @@ export function ChatInterface({
 }: ChatInterfaceProps) {
 	const scrollAreaRef = useRef<HTMLDivElement>(null);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const insightsEndRef = useRef<HTMLDivElement>(null);
 
-	const scrollToBottom = () => {
+	useEffect(() => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
-	};
-
-	useEffect(() => {
-		scrollToBottom();
 	}, [messages]);
+
+	useEffect(() => {	
+		if (insightsEndRef.current) {
+			insightsEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [previewData]);
 
 	return (
 		<div className="min-h-screen bg-black relative overflow-hidden">
@@ -107,6 +110,10 @@ export function ChatInterface({
 								<h3 className="text-green-500 text-sm font-medium mb-2">
 									Insights
 								</h3>
+								<ScrollArea className="h-[200px] overflow-y-auto relative">
+									<div className="absolute inset-0 pointer-events-none">
+										<div className="h-full w-full bg-gradient-to-b from-black/20 via-transparent to-black/20" />
+									</div>
 								<ul className="space-y-2">
 									{previewData.insights.map((insight, index) => (
 										<motion.li 
@@ -117,7 +124,8 @@ export function ChatInterface({
 											{insight}
 										</motion.li>
 									))}
-								</ul>
+									<div ref={insightsEndRef} />
+								</ul></ScrollArea>
 							</div>
 
 							<div>

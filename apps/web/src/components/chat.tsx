@@ -13,6 +13,7 @@ export type VerificationStep = "intro" | "id-front" | "id-back" | "face" | "veri
 export type PreviewData = {
 	insights: string[];
 	confidence: number;
+	risk: number;
 	category: string;
 };
 
@@ -20,6 +21,7 @@ export const Chat = () => {
 	const [previewData, setPreviewData] = useState<PreviewData>({
 		insights: ["User is starting the verification process."],
 		confidence: 0,
+		risk: 0,
 		category: "General Discussion",
 	});
 	const [step, setStep] = useState<VerificationStep>("intro");

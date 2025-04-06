@@ -127,10 +127,10 @@ export function ChatInterface({
 									<div ref={insightsEndRef} />
 								</ul></ScrollArea>
 							</div>
-
+							<div className="space-y-2 border-y border-green-500/20 py-4">
 							<div>
 								<h3 className="text-green-500 text-sm font-medium mb-2">
-									Confidence Score
+									Identity Score
 								</h3>
 								<div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
 									<div
@@ -148,7 +148,27 @@ export function ChatInterface({
 									{(previewData.confidence * 100).toFixed(2) }%
 								</p>
 							</div>
-
+							<div>
+								<h3 className="text-red-500 text-sm font-medium mb-2">
+									Risk Score
+								</h3>
+								<div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+									<div
+										className={cn(
+											"h-full bg-green-500 transition-all duration-500",
+											previewData.risk < 0.9 && "bg-red-500",
+											previewData.risk < 0.5 && "bg-orange-500",
+											previewData.risk < 0.3 && "bg-yellow-500",
+											previewData.risk < 0.1 && "bg-green-300",
+										)}
+										style={{ width: `${previewData.risk * 100}%` }}
+									/>
+								</div>
+								<p className="text-right text-sm text-gray-400 mt-1">
+									{(previewData.risk * 100).toFixed(2) }%
+								</p>
+							</div>
+							</div>
 							<div>
 								<h3 className="text-green-500 text-sm font-medium mb-2">
 									Category

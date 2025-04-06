@@ -105,11 +105,7 @@ export function Camera({ onCapture }: CameraProps) {
 						Take Photo
 					</Button>
 				) : (
-					<Button
-						onClick={retakePhoto}
-						variant="outline"
-						className="flex items-center"
-					>
+					<Button onClick={retakePhoto} className="flex items-center">
 						<RefreshCw className="mr-2 h-4 w-4" />
 						Retake
 					</Button>

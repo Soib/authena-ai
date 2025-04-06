@@ -8,6 +8,8 @@ import { ChatInterface } from "~/components/chat-interface";
 import { useFaceApi, type FaceDescriptor } from "~/hooks/use-face-api";
 import { useScrapDocumentData } from "~/hooks/use-scarp-document-data";
 import { cn } from "~/lib/utils";
+import { calculateLegitimacy } from "~/lib/calculateLegitimacy";
+import type { DocumentFieldOutput } from "@azure-rest/ai-document-intelligence";
 
 export type VerificationStep = "intro" | "id-front" | "id-back" | "face" | "verifying" | "result";
 export type PreviewData = {
@@ -47,7 +49,13 @@ export const Chat = () => {
 		score: number;
 	} | null>(null);
 
-	const { addDocument, results, error, isProcessing } =
+  const [documentResults, setDocumentResults] = useState<{idFront?: {data?: Record<string, DocumentFieldOutput>, score?: number}, idBack?: {data?: Record<string, DocumentFieldOutput>, score?: number}}>({
+    idFront: undefined,
+    idBack: undefined,
+  });
+  
+
+	const { addDocument,isProcessing } =
 		useScrapDocumentData(setStep);
 	const { detectFace, calculateDistance } = useFaceApi();
 
@@ -67,7 +75,9 @@ export const Chat = () => {
 			category: "ID Verification",
 			insights: [...prev.insights, "User provided the front of their ID card."],
 		}));
-		await addDocument("idFront", imageData);
+    const data = await addDocument("idFront", imageData);
+  
+        setDocumentResults({idFront: {data: data?.extractedFields["idFront"], score: data?.idScrappingResultScore}});
 		setPreviewData((prev) => ({
 			...prev,
 			insights: [...prev.insights, "AI has analyzed the ID data integrity."],
@@ -106,8 +116,12 @@ export const Chat = () => {
 			insights: [...prev.insights, "User provided the back of their ID card."],
 		}));
 		addMessage("system", "Back of ID card captured.");
-		await addDocument("idBack", imageData);
-		setPreviewData((prev) => ({
+    const data = await addDocument("idBack", imageData);
+
+
+    setDocumentResults((prev) => ({...prev, idBack: {data: data?.extractedFields["idBack"], score: data?.idScrappingResultScore}}));
+
+    		setPreviewData((prev) => ({
 			...prev,
 			insights: [...prev.insights, "AI has analyzed the ID data integrity."],
 		}));
@@ -145,15 +159,14 @@ export const Chat = () => {
 						Array.from(idCardDescriptor.descriptor),
 						Array.from(faceDescriptor.descriptor),
 					);
-					const threshold = 0.6;
-					const matched = distance < threshold;
+          const legitimacy = calculateLegitimacy(documentResults, distance)			
 
-					setVerificationResult({ matched, score: distance });
+          setVerificationResult({ matched: legitimacy.isValid, score: legitimacy.score });
 
-					if (matched) {
+					if (legitimacy.isValid) {
 						addMessage(
 							"assistant",
-							`Verification successful! The similarity score is ${((1 - distance) * 100).toFixed(2)}%.`,
+							`Verification successful! The similarity score is ${((1 - legitimacy.score) * 100).toFixed(2)}%.`,
 						);
 						setPreviewData((prev) => ({
 							...prev,

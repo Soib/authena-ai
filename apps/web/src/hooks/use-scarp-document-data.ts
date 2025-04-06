@@ -1,10 +1,14 @@
 import DocumentIntelligence, {
-	getLongRunningPoller,
-	isUnexpected,
-	type AnalyzeOperationOutput,
-	type AnalyzeResultOutput,
+  getLongRunningPoller,
+  isUnexpected,
+  type AnalyzeOperationOutput,
+  type AnalyzeResultOutput,
+  type DocumentFieldOutput,
 } from "@azure-rest/ai-document-intelligence";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { calculateDocumentRiskScore } from "~/lib/documentRiskScore";
+import { extractIdDocumentFields } from "~/lib/extractData";
+import type {Essa, DocumentType } from "~/types";
 
 const MAX_POLLING_ATTEMPTS = 5;
 const endpoint = process.env.NEXT_PUBLIC_AZURE_ENDPOINT;
@@ -18,12 +22,12 @@ const client = DocumentIntelligence(endpoint, {
 	key: apiKey,
 });
 
-export type DocumentType = "idFront" | "idBack";
 
 export interface DocumentData {
 	type: DocumentType;
 	base64: string;
 }
+
 
 export const useScrapDocumentData = (
 	setStep: Dispatch<
@@ -32,25 +36,24 @@ export const useScrapDocumentData = (
 		>
 	>,
 ) => {
-	const [documents, setDocuments] = useState<DocumentData[]>([]);
-	const [results, setResults] = useState<
-		Record<DocumentType, AnalyzeResultOutput | undefined | null>
-	>({
-		idFront: null,
-		idBack: null,
-	});
-	const [error, setError] = useState<Error | null>(null);
-	const [isProcessing, setIsProcessing] = useState(false);
+  const [documents, setDocuments] = useState<DocumentData[]>([]);
+  const [results, setResults] = useState<{idFront?: Record<string, DocumentFieldOutput>, idBack?: Record<string, DocumentFieldOutput>}>({
+    idFront: undefined,
+    idBack: undefined,
+  });
+  const [error, setError] = useState<Error | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-	// Add a document image
-	const addDocument = async (type: DocumentType, base64: string) => {
-		await analyzeDocuments(type, base64);
-		// setDocuments((prev) => {
-		//   // Replace if document of this type already exists
-		//   const filtered = prev.filter((doc) => doc.type !== type);
-		//   return [...filtered, { type, base64 }];
-		// });
-	};
+  // Add a document image
+  const addDocument = async (type: DocumentType, base64: string) => {
+    return await analyzeDocuments(type, base64);
+
+    // setDocuments((prev) => {
+    //   // Replace if document of this type already exists
+    //   const filtered = prev.filter((doc) => doc.type !== type);
+    //   return [...filtered, { type, base64 }];
+    // });
+  };
 
 	const analyzeDocuments = async (type: DocumentType, base64: string) => {
 		try {
@@ -113,26 +116,28 @@ export const useScrapDocumentData = (
 
 			console.log(`Analysis result for ${type}:`, analysisResult);
 
-			// Update results state
-			const newResults = { ...results };
-			newResults[type] = analysisResult;
+      const extractedFields = extractIdDocumentFields({
+        idFront: type === 'idFront' ? analysisResult : undefined,
+        idBack: type === 'idBack' ? analysisResult : undefined
+      })
+      const idScrappingResultScore = calculateDocumentRiskScore(extractedFields)
 
-			setResults(newResults);
-		} catch (err) {
-			setError(err instanceof Error ? err : new Error(String(err)));
-		} finally {
-			setIsProcessing(false);
-		}
-	};
-	// Clear all documents
-	const clearDocuments = () => {
-		setDocuments([]);
-		setResults({
-			idFront: null,
-			idBack: null,
-		});
-		setError(null);
-	};
+      return {
+        extractedFields,
+        idScrappingResultScore
+      }
+    
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  // Clear all documents
+  const clearDocuments = () => {
+    setDocuments([]);
+    setError(null);
+  };
 
 	return {
 		documents,
